@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Hora del Código — Retos Blockly</title>
+
+<!-- Blockly -->
+<script src="https://unpkg.com/blockly/blockly.min.js"></script>
+
+<style>
+  body { font-family: Arial, Helvetica, sans-serif; margin: 12px; background: #fafafa; }
+  h1 { margin: 6px 0 12px 0; }
+  #controls { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:10px; }
+  input, select, button { padding: 8px 10px; font-size:1rem; border-radius:6px; border:1px solid #bbb; }
+  button { background:#007bff; color:#fff; border:none; cursor:pointer; }
+  button:hover { background:#0056d0; }
+  #reto-section { margin-top:16px; display:none; }
+  #blocklyDiv {
+  height: 480px;              /* más alto */
+  width: 100%;
+  border: 2px solid #007bff;  /* borde visible */
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+
+  #historia-hoc {
+  background: #ffffff;
+  border-left: 6px solid #007bff;
+  padding: 16px 18px;
+  border-radius: 10px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+#historia-hoc h2 {
+  margin-top: 0;
+  color: #007bff;
+}
+
+#historia-hoc p {
+  line-height: 1.6;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+#historia-hoc .mensaje {
+  text-align: center;
+  font-weight: bold;
+  color: #0056d0;
+  margin-top: 14px;
+}
+
+/* Blockly: bloques más grandes */
+.blocklyMainBackground {
+  stroke-width: 0;
+}
+
+.blocklyText {
+  font-size: 16px !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+/* Categorías del toolbox más grandes */
+.blocklyTreeLabel {
+  font-size: 15px !important;
+}
+
+/* Campos editables (texto, números) */
+.blocklyFieldTextInput,
+.blocklyFieldNumber {
+  font-size: 15px !important;
+  padding: 2px;
+}
+
+</style>
+</head>
+<body>
+
+<div id="topbar">Hora del Código — Retos Blockly</div>
+
+<section id="historia-hoc">
+  <h2>🕒 ¿Qué es la Hora del Código?</h2>
+
+  <p>
+    La <strong>Hora del Código</strong> es una iniciativa educativa mundial que busca
+    demostrar que <strong>cualquiera puede aprender a programar</strong>, sin importar
+    su edad, género o experiencia previa.
+  </p>
+
+  <p>
+    Fue creada en el año <strong>2013</strong> por los hermanos
+    <strong>Hadi y Ali Partovi</strong>, fundadores de la organización
+    <strong>Code.org</strong>.
+    Su idea era simple pero poderosa: dedicar una hora para que estudiantes
+    de todo el mundo tuvieran su primer contacto con la programación.
+  </p>
+
+  <p>
+    Hoy en día, millones de estudiantes desde <strong>prekínder hasta grado 12</strong>
+    participan cada año, aprendiendo a crear, resolver problemas y pensar de
+    manera lógica usando la computadora.
+  </p>
+
+  <p class="mensaje">
+    💡 <em>Programar no es solo escribir código… es aprender a crear soluciones.</em>
+  </p>
+</section>
+
+
+<div id="controls">
+  <label>Nombre <input id="nombre" type="text" placeholder="Tu nombre"></label>
+  <label>Grupo 
+    <select id="grupo">
+      <option value="6-1">6-1</option>
+      <option value="6-2">6-2</option>
+      <option value="7-1">7-1</option>
+      <option value="8-1">8-1</option>
+      <option value="9-1">9-1</option>
+      <option value="Maestro">Maestro</option>
+    </select>
+  </label>
+  <label>Email <input id="email" type="email" placeholder="usuario@miescuela.pr"></label>
+  <button id="startBtn">Comenzar Reto</button>
+</div>
+
+<div id="reto-section">
+  <h2 id="titulo-reto"></h2>
+  <p id="descripcion-reto"></p>
+
+  <div id="blocklyDiv"></div>
+
+  <div style="margin-top:8px;">
+    <button id="run-btn">Ejecutar Código</button>
+    <button id="siguiente-btn" style="margin-left:8px; display:none;">Siguiente Reto</button>
+  </div>
+
+  <pre id="output">Aquí aparecerá la salida.</pre>
+</div>
+
+<!-- Toolbox (Blockly necesita verlo, no debe estar display:none) -->
+<xml id="toolbox" style="visibility:hidden; height:0; overflow:hidden">
+  <category name="Texto" colour="#5CA65C">
+    <block type="text"></block>
+    <block type="text_print"></block>
+  </category>
+  <category name="Matemáticas" colour="#5C68A6">
+    <block type="math_number"></block>
+    <block type="math_arithmetic"></block>
+  </category>
+</xml>
+
+<script>
+/* ============================
+   RETOS
+   ============================ */
+const retos = [
+  { titulo: "Reto 1: Haz que el robot diga Hola",
+    descripcion: "Usa los bloques para que el robot escriba 'Hola'.",
+    esperado: "Hola",
+    toolbox: `<xml>
+                <block type="text_print">
+                  <value name="TEXT"><block type="text"><field name="TEXT">Hola</field></block></value>
+                </block>
+              </xml>`
+  },
+  { titulo: "Reto 2: Haz que el robot diga Adiós",
+    descripcion: "Usa los bloques para que el robot escriba 'Adiós'.",
+    esperado: "Adiós",
+    toolbox: `<xml>
+                <block type="text_print">
+                  <value name="TEXT"><block type="text"><field name="TEXT">Adiós</field></block></value>
+                </block>
+              </xml>`
+  },
+  { titulo: "Reto 3: ¡Hola Mundo!",
+    descripcion: "Haz que el robot escriba '¡Hola Mundo!'.",
+    esperado: "¡Hola Mundo!",
+    toolbox: `<xml>
+                <block type="text_print">
+                  <value name="TEXT"><block type="text"><field name="TEXT">¡Hola Mundo!</field></block></value>
+                </block>
+              </xml>`
+  },
+  { titulo: "Reto 4: 2 + 3",
+    descripcion: "Imprime la suma 2 + 3 usando bloques.",
+    esperado: "5",
+    toolbox: `<xml>
+                <block type="text_print">
+                  <value name="TEXT">
+                    <block type="math_arithmetic"><field name="OP">ADD</field>
+                      <value name="A"><block type="math_number"><field name="NUM">2</field></block></value>
+                      <value name="B"><block type="math_number"><field name="NUM">3</field></block></value>
+                    </block>
+                  </value>
+                </block>
+              </xml>`
+  },
+    { titulo: "Reto 5: Un aspecto social de la salud",
+    descripcion: "Imprime, como me relaciono con los demas.",
+    esperado: "como me relaciono con los demas",
+    toolbox: `<xml>
+                <block type="text_print">
+                  <value name="TEXT"><block type="text"><field name="TEXT">como me relaciono con los demas</field></block></value>
+                </block>
+              </xml>`
+  }
+  // puedes agregar más retos aquí si quieres
+];
+
+let workspace = null;
+let retoActual = 0;
+let tiempoInicio = null;
+
+/* ============================
+   Helpers: normalizar salidas
+   ============================ */
+function normalizarSalida(str){
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replace(/["'“”‘’]/g,"")
+    .replace(/\u00A0/g," ")
+    .replace(/\s+/g," ")
+    .trim()
+    .toLowerCase();
+}
+
+/* ============================
+   Asegurar que text_print genere console.log
+   ============================ */
+(function configureGenerator(){
+  // Si el generador de text_print existe, lo reemplazamos para forzar console.log.
+  if (Blockly && Blockly.JavaScript) {
+    Blockly.JavaScript['text_print'] = function(block) {
+      var msg = Blockly.JavaScript.valueToCode(block, 'TEXT', Blockly.JavaScript.ORDER_NONE) || "''";
+      return 'console.log(' + msg + ');\n';
+    };
+  }
+})();
+
+/* ============================
+   Función para cargar un reto
+   ============================ */
+function cargarReto(index){
+  const r = retos[index];
+  document.getElementById('titulo-reto').textContent = r.titulo;
+  document.getElementById('descripcion-reto').textContent = r.descripcion;
+
+  // Convertir XML toolbox del reto a DOM y actualizar toolbox del workspace.
+  try {
+    const toolboxDom = Blockly.Xml.textToDom(r.toolbox);
+    workspace.updateToolbox(toolboxDom);
+  } catch(e){
+    // Si algo falla, dejamos el toolbox global
+    console.warn("Error cargando toolbox del reto:", e);
+  }
+}
+
+/* ============================
+   Iniciar workspace y eventos
+   ============================ */
+document.getElementById('startBtn').addEventListener('click', () => {
+  const nombre = document.getElementById('nombre').value.trim();
+  const email = document.getElementById('email').value.trim();
+  if (!nombre || !email) {
+    alert("Completa nombre y email institucional.");
+    return;
+  }
+  if (!email.endsWith("@miescuela.pr")) {
+    alert("Usa tu email institucional (@miescuela.pr).");
+    return;
+  }
+
+  // Mostrar sección de reto
+  document.getElementById('reto-section').style.display = 'block';
+  tiempoInicio = Date.now();
+
+  // Crear workspace solo una vez
+  if (!workspace) {
+    workspace = Blockly.inject('blocklyDiv', {
+  toolbox: document.getElementById('toolbox'),
+  trashcan: true,
+  scrollbars: true,
+  zoom: {
+    controls: true,
+    wheel: true,
+    startScale: 1.8,   // ⬅️ BLOQUES MÁS GRANDES AL INICIO
+    maxScale: 2,
+    minScale: 0.8
+  }
+});
+
+  }
+
+  // Empezar por el primer reto
+  retoActual = 0;
+  cargarReto(retoActual);
+  // Forzar que el toolbox inicial aparezca (en algunos navegadores necesita foco)
+  setTimeout(() => workspace.toolbox_.refreshSelection(), 100);
+});
+
+/* ============================
+   Ejecutar y validar código
+   ============================ */
+document.getElementById('run-btn').addEventListener('click', () => {
+  if (!workspace) { alert("Primero presiona 'Comenzar Reto'"); return; }
+
+  const outputArea = document.getElementById('output');
+  outputArea.textContent = "";
+  document.getElementById('siguiente-btn').style.display = 'none';
+
+  try {
+    const code = Blockly.JavaScript.workspaceToCode(workspace);
+
+    // Capturadores temporales
+    let captured = "";
+    const origLog = console.log;
+    const origAlert = window.alert;
+    const origWrite = document.write;
+
+    console.log = function(...args){
+      // unir los argumentos similar a console
+      captured += args.map(a => String(a)).join(" ") + "\n";
+      origLog.apply(console, args);
+    };
+    window.alert = function(msg){
+      captured += String(msg) + "\n";
+    };
+    document.write = function(msg){
+      captured += String(msg) + "\n";
+    };
+
+    // Ejecutar código generado
+    // eslint-disable-next-line no-eval
+    eval(code);
+
+    // Restaurar
+    console.log = origLog;
+    window.alert = origAlert;
+    document.write = origWrite;
+
+    captured = captured.trim();
+
+    // Mostrar salida en output
+    if (captured.length === 0) {
+      outputArea.textContent = "— (no hubo salida) —";
+      outputArea.style.color = "#ffd54d";
+    } else {
+      outputArea.textContent = captured;
+      outputArea.style.color = "#6fff6f";
+    }
+
+    // Validación
+    const esperado = retos[retoActual].esperado;
+    if ( normalizarSalida(captured) === normalizarSalida(esperado) ) {
+      // Correcto
+      outputArea.textContent = captured + "\n\n✔ ¡Correcto!";
+      outputArea.style.color = "limegreen";
+      document.getElementById('siguiente-btn').style.display = 'inline-block';
+    } else {
+      // Incorrecto
+      outputArea.textContent = captured + "\n\n❌ Intenta de nuevo.";
+      outputArea.style.color = "crimson";
+    }
+
+  } catch (err) {
+    document.getElementById('output').textContent = "❌ Error al ejecutar: " + String(err);
+    document.getElementById('output').style.color = "crimson";
+    // Restaurar por si algo quedó cambiado
+    try{ console.log = console.log || console.log; }catch(e){}
+  }
+});
+
+/* ============================
+   Botón siguiente reto
+   ============================ */
+document.getElementById('siguiente-btn').addEventListener('click', () => {
+  if (retoActual < retos.length - 1) {
+    retoActual++;
+    // limpiar workspace y cargar toolbox nuevo
+    workspace.clear();
+    cargarReto(retoActual);
+    document.getElementById('output').textContent = "";
+    document.getElementById('siguiente-btn').style.display = 'none';
+  } else {
+    document.getElementById('output').textContent = "🎉 ¡Completaste todos los retos!, Saca una caputura de la pantalla y envialo por Teams como evidencia a tu maestro (a)";
+    document.getElementById('siguiente-btn').style.display = 'none';
+  }
+});
+
+/* ============================
+   Consejo: Si quieres que text_print use alert en pantalla
+   (no requerido). Por defecto ya cambiamos a console.log.
+   ============================ */
+</script>
+</body>
+</html>
+
